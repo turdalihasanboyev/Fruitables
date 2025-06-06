@@ -8,6 +8,12 @@ from .models import (
     Category,
     Product,
     Review,
+    WishList,
+    WishListItem,
+    Cart,
+    CartItem,
+    Order,
+    OrderItem,
 )
 
 
@@ -18,3 +24,9 @@ admin.site.register(Contact)
 admin.site.register(Category)
 admin.site.register(Product)
 admin.site.register(Review)
+admin.site.register(WishList)
+admin.site.register(WishListItem)
+admin.site.register(Cart)
+admin.site.register(CartItem)
+admin.site.register(Order)
+admin.site.register(OrderItem)
