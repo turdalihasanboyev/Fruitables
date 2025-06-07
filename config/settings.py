@@ -63,6 +63,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'config.global_context.global_context',
             ],
         },
     },
@@ -135,6 +137,6 @@ AUTH_USER_MODEL = 'fruitables.CustomUser'
 
 # LOGIN_URL = 'login'
 
-# LOGIN_REDIRECT_URL = 'home'
+# LOGIN_REDIRECT_URL = 'profile'
 
 # LOGOUT_REDIRECT_URL = 'home'
