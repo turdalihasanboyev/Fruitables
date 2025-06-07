@@ -10,5 +10,5 @@ from .views import (
 urlpatterns = [
     path('', home_view, name='home'),
     path('home2/', home_view2, name='home2'),
-    path('profile/', profile_view, name='profile'),
+    path('profile/<int:pk>/', profile_view, name='profile'),
 ]
