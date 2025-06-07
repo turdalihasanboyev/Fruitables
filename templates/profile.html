@@ -1,0 +1,123 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.get_full_name|default:user.username }} - Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .profile-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-header img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ddd;
+            margin-right: 20px;
+        }
+
+        .profile-header .name-block {
+            flex-grow: 1;
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 28px;
+            color: #333;
+        }
+
+        .profile-header p {
+            color: #777;
+            margin: 5px 0 0;
+        }
+
+        .profile-info {
+            line-height: 1.8;
+            color: #444;
+        }
+
+        .profile-info strong {
+            display: inline-block;
+            width: 140px;
+            color: #222;
+        }
+
+        .logout-button {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .logout-button a {
+            background: #e53e3e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .logout-button a:hover {
+            background: #c53030;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="profile-container">
+        <div class="logout-button">
+            <a href="{% url 'logout' %}">Logout</a>
+        </div>
+
+        <div class="profile-header">
+            {% if user.image %}
+            <img src="{{ user.image.url }}" alt="Profile Image">
+            {% else %}
+            <img src="https://via.placeholder.com/120x120?text=No+Image" alt="No Image">
+            {% endif %}
+            <div class="name-block">
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>{{ user.email }}</p>
+            </div>
+        </div>
+
+        <div class="profile-info">
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>First Name:</strong> {{ user.first_name|default:"N/A" }}</p>
+            <p><strong>Last Name:</strong> {{ user.last_name|default:"N/A" }}</p>
+            <p><strong>Full Name:</strong> {{ user.get_full_name|default:"N/A" }}</p>
+            <p><strong>Phone Number:</strong> {{ user.phone_number|default:"N/A" }}</p>
+            <p><strong>Date Joined:</strong> {{ user.date_joined|date:"F d, Y - H:i" }}</p>
+            <p><strong>Last Login:</strong> {{ user.last_login|date:"F d, Y - H:i" }}</p>
+            <p><strong>Bio:</strong> {{ user.bio|default:"No bio provided." }}</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

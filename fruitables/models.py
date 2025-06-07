@@ -111,6 +111,7 @@ class Product(BaseModel):
     quality = models.CharField(max_length=100, null=True, blank=True)
     check_status = models.CharField(max_length=100, null=True, blank=True)
     min_weight = models.CharField(max_length=100, null=True, blank=True)
+    views = models.PositiveIntegerField(default=0)
 
     @property
     def discount(self):
@@ -132,7 +133,7 @@ class Product(BaseModel):
         return reverse('product_detail', kwargs={'slug': self.slug})
 
     def __str__(self):
-        return f'ID: {self.id} - Name: {self.name} - Category: {self.category} - Price: {self.price} - Discount: {self.discount} - Price Type: {self.price_type} - Unit Type {self.unit_type} - Rating: {self.average_rating}'
+        return f'ID: {self.id} - Name: {self.name} - Category: {self.category} - Price: {self.price} - Discount: {self.discount} - Price Type: {self.price_type} - Unit Type {self.unit_type} - Rating: {self.average_rating} - Views Count: {self.views}'
 
 
 class Review(BaseModel):
