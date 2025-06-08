@@ -83,6 +83,54 @@
         .logout-button a:hover {
             background: #c53030;
         }
+
+        .password-button {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .password-button a {
+            background: linear-gradient(135deg, #4A90E2, #007BFF);
+            /* Gradient blue */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .password-button a:hover {
+            background: linear-gradient(135deg, #0056b3, #003d80);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0, 91, 179, 0.4);
+        }
+
+        .home-button {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .home-button a {
+            background: linear-gradient(135deg, #34d058, #28a745);
+            /* Green gradient */
+            color: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .home-button a:hover {
+            background: linear-gradient(135deg, #228c3d, #1e7e34);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(32, 130, 60, 0.4);
+        }
     </style>
 </head>
 
@@ -91,6 +139,14 @@
     <div class="profile-container">
         <div class="logout-button">
             <a href="{% url 'logout' %}">Logout</a>
+        </div>
+
+        <div class="home-button">
+            <a href="{% url 'home' %}">Home</a>
+        </div>
+
+        <div class="password-button">
+            <a href="{% url 'change_password' %}">Change Password</a>
         </div>
 
         <div class="profile-header">

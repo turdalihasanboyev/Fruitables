@@ -135,8 +135,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'fruitables.CustomUser'
 
-# LOGIN_URL = 'login'
+LOGIN_URL = 'login'
 
-# LOGIN_REDIRECT_URL = 'profile'
+LOGIN_REDIRECT_URL = 'profile'
 
 LOGOUT_REDIRECT_URL = 'home'
