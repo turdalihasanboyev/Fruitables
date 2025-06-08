@@ -9,6 +9,9 @@ from .views import (
     register_view,
     login_view,
     change_password_view,
+    shop_view,
+    about_view,
+    category_view,
 )
 
 
@@ -21,4 +24,7 @@ urlpatterns = [
     path('register/', register_view, name='register'),
     path('login/', login_view, name='login'),
     path('change-password/', change_password_view, name='change_password'),
+    path('shop/', shop_view, name='shop'),
+    path('about/', about_view, name='about'),
+    path('category/<slug:slug>/', category_view, name='category'),
 ]

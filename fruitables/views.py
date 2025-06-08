@@ -8,7 +8,7 @@ from django.contrib.auth import logout, login, authenticate, update_session_auth
 
 from django.db.models import Avg
 
-from .models import CustomUser, Product, SubEmail, Contact
+from .models import CustomUser, Product, SubEmail, Contact, Category
 
 
 @login_required
@@ -157,3 +157,44 @@ def change_password_view(request):
         return redirect('profile', pk=request.user.id)
 
     return render(request, 'change_password.html')
+
+def shop_view(request):
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email added to the list')
+            return redirect('shop')
+
+    featured_products = Product.objects.filter(is_featured=True).order_by('-id')
+    products = Product.objects.all().order_by('id')
+
+    context = {
+        'featured_products': featured_products[:3],
+        'products': products[:9],
+    }
+
+    return render(request, 'shop.html', context)
+
+def about_view(request):
+    return render(request, 'about.html')
+
+def category_view(request, slug):
+    category = get_object_or_404(Category, slug__exact=slug)
+    products = Product.objects.filter(category=category).order_by('id')
+
+    if request.method == "POST":
+        email = request.POST.get('email')
+
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email added to the list')
+            return redirect('category', slug)
+
+    context = {
+        'category': category,
+        'products': products[:9],
+    }
+
+    return render(request, 'category.html', context)
