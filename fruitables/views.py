@@ -1,32 +1,31 @@
 from django.shortcuts import render, get_object_or_404, redirect
 
-from django.contrib.auth.decorators import login_required
-
 from django.contrib import messages
 
 from django.contrib.auth import logout, login, authenticate, update_session_auth_hash
 
-from django.db.models import Avg
+from django.contrib.auth.decorators import login_required
 
 from .models import CustomUser, Product, SubEmail, Contact, Category, Review
 
 
 @login_required
 def profile_view(request, pk):
-    user = get_object_or_404(CustomUser, id=pk)
+    user = get_object_or_404(CustomUser, pk=pk)
     return render(request, 'profile.html', {'user': user})
 
 @login_required
 def home_view(request):
     email = request.POST.get('email')
 
-    vegetables = Product.objects.filter(category__name__icontains='Vegetable')
+    vegetables = Product.objects.filter(category__slug__exact='vegetable')
     best_products = Product.objects.all().order_by('-views')[:6]
     top_products = Product.objects.all().order_by('-views')[:4]
 
     if email:
         SubEmail.objects.create(email=email)
         messages.success(request, 'You have successfully subscribed to our newsletter!')
+        return redirect('home')
 
     context = {
         'vegetables': vegetables,
@@ -40,13 +39,14 @@ def home_view(request):
 def home_view2(request):
     email = request.POST.get('email')
 
-    vegetables = Product.objects.filter(category__name__icontains='Vegetable')
+    vegetables = Product.objects.filter(category__slug__exact='vegetable')
     best_products = Product.objects.all().order_by('-views')[:6]
     top_products = Product.objects.all().order_by('-views')[:4]
 
     if email:
         SubEmail.objects.create(email=email)
         messages.success(request, 'You have successfully subscribed to our newsletter!')
+        return redirect('home2')
 
     context = {
         'vegetables': vegetables,
@@ -114,7 +114,7 @@ def register_view(request):
         user.save()
         messages.success(request, 'You have successfully registered!')
         login(request, user)
-        return redirect('profile', user.id)
+        return redirect('profile', user.pk)
 
     return render(request, 'register.html')
 
@@ -128,7 +128,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, 'User logged in successfully')
-            return redirect('profile', user.id)
+            return redirect('profile', user.pk)
         else:
             messages.error(request, 'Invalid username or password')
             return redirect('login')
@@ -154,7 +154,7 @@ def change_password_view(request):
         request.user.save()
         update_session_auth_hash(request, request.user)
         messages.success(request, "Your password has been updated successfully.")
-        return redirect('profile', pk=request.user.id)
+        return redirect('profile', pk=request.user.pk)
 
     return render(request, 'change_password.html')
 
@@ -212,7 +212,7 @@ def product_detail_view(request, slug):
     featured_products = Product.objects.filter(is_featured=True)
     related_products = Product.objects.filter(
         category__slug__iexact=product.category.slug
-    ).exclude(id=product.id)
+    ).exclude(pk=product.pk)
     reviews = Review.objects.filter(product=product).order_by('-id')
 
     if request.method == "POST":

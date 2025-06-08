@@ -25,12 +25,12 @@
                         <div class="carousel-item active rounded">
                             <img src="{% static '' %}img/hero-img-1.png"
                                 class="img-fluid w-100 h-100 bg-secondary rounded" alt="First slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Fruites</a>
+                            <a href="/" class="btn px-4 py-2 text-white rounded">Fruites</a>
                         </div>
                         <div class="carousel-item rounded">
                             <img src="{% static '' %}img/hero-img-2.jpg" class="img-fluid w-100 h-100 rounded"
                                 alt="Second slide">
-                            <a href="#" class="btn px-4 py-2 text-white rounded">Vesitables</a>
+                            <a href="/" class="btn px-4 py-2 text-white rounded">Vesitables</a>
                         </div>
                     </div>
                     <button class="carousel-control-prev" type="button" data-bs-target="#carouselId"
@@ -296,7 +296,7 @@
                             <img src="{{ b.image.url }}" class="img-fluid rounded-circle w-100" alt="product img">
                         </div>
                         <div class="col-6">
-                            <a href="#" class="h5">{{ b.name }}</a>
+                            <a href="{{ b.get_absolute_url }}" class="h5">{{ b.name }}</a>
                             <div class="d-flex my-3">
                                 <i class="fas fa-star text-primary"></i>
                                 <i class="fas fa-star text-primary"></i>
@@ -318,7 +318,7 @@
                 <div class="text-center">
                     <img src="{{ t.image.url }}" class="img-fluid rounded" alt="">
                     <div class="py-4">
-                        <a href="#" class="h5">{{ t.name }}</a>
+                        <a href="{{ t.get_absolute_url }}" class="h5">{{ t.name }}</a>
                         <div class="d-flex my-3 justify-content-center">
                             <i class="fas fa-star text-primary"></i>
                             <i class="fas fa-star text-primary"></i>
