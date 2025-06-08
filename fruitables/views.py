@@ -284,3 +284,14 @@ def remove_from_wishlist(request, pk):
         messages.info(request, 'Your wishlist is now empty and has been deleted.')
 
     return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+@login_required
+def wishlist_view(request):
+    email = request.POST.get('email')
+    wishlist_items = WishListItem.objects.filter(wishlist__user=request.user)
+    if request.method == "POST":
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email added to the list')
+            return redirect('wishlist')
+    return render(request, 'wishlist.html', {'wishlist_items': wishlist_items})
