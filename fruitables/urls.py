@@ -14,6 +14,8 @@ from .views import (
     category_view,
     product_detail_view,
     testimonial_view,
+    add_to_wishlist,
+    remove_from_wishlist,
 )
 
 
@@ -31,4 +33,6 @@ urlpatterns = [
     path('category/<slug:slug>/', category_view, name='category'),
     path('product-detail/<slug:slug>/', product_detail_view, name='product_detail'),
     path('testimonial/', testimonial_view, name='testimonial'),
+    path('product/add-to-wishlist/<int:pk>/', add_to_wishlist, name='add_to_wishlist'),
+    path('product/remove-from-wishlist/<int:pk>/', remove_from_wishlist, name='remove_from_wishlist'),
 ]

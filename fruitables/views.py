@@ -6,7 +6,9 @@ from django.contrib.auth import logout, login, authenticate, update_session_auth
 
 from django.contrib.auth.decorators import login_required
 
-from .models import CustomUser, Product, SubEmail, Contact, Category, Review
+from django.urls import reverse
+
+from .models import CustomUser, Product, SubEmail, Contact, Category, Review, WishList, WishListItem
 
 
 @login_required
@@ -251,3 +253,34 @@ def testimonial_view(request):
             messages.success(request, 'Email added to the list')
             return redirect('testimonial')
     return render(request, 'testimonial.html')
+
+@login_required
+def add_to_wishlist(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    wishlist, wishlist_created = WishList.objects.get_or_create(user=request.user)
+    wishlist_item, wishlist_item_created = WishListItem.objects.get_or_create(product=product, wishlist=wishlist)
+
+    if not wishlist_item_created:
+        messages.warning(request, 'Product already in your wishlist')
+
+    return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+@login_required
+def remove_from_wishlist(request, pk):
+    wishlist_item = get_object_or_404(WishListItem, pk=pk)
+    wishlist = wishlist_item.wishlist
+
+    if wishlist.user != request.user:
+        messages.error(request, "You don't have permission to remove this item.")
+        return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+    wishlist_item.delete()
+    messages.success(request, 'Product removed from your wishlist')
+
+    other_items = WishListItem.objects.filter(wishlist=wishlist).exists()
+
+    if not other_items:
+        wishlist.delete()
+        messages.info(request, 'Your wishlist is now empty and has been deleted.')
+
+    return redirect(request.META.get("HTTP_REFERER", reverse("home")))
