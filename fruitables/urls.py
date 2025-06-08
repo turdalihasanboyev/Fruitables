@@ -12,6 +12,8 @@ from .views import (
     shop_view,
     about_view,
     category_view,
+    product_detail_view,
+    testimonial_view,
 )
 
 
@@ -27,4 +29,6 @@ urlpatterns = [
     path('shop/', shop_view, name='shop'),
     path('about/', about_view, name='about'),
     path('category/<slug:slug>/', category_view, name='category'),
+    path('product-detail/<slug:slug>/', product_detail_view, name='product_detail'),
+    path('testimonial/', testimonial_view, name='testimonial'),
 ]

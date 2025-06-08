@@ -8,7 +8,7 @@ from django.contrib.auth import logout, login, authenticate, update_session_auth
 
 from django.db.models import Avg
 
-from .models import CustomUser, Product, SubEmail, Contact, Category
+from .models import CustomUser, Product, SubEmail, Contact, Category, Review
 
 
 @login_required
@@ -158,6 +158,7 @@ def change_password_view(request):
 
     return render(request, 'change_password.html')
 
+@login_required
 def shop_view(request):
     if request.method == "POST":
         email = request.POST.get('email')
@@ -177,9 +178,11 @@ def shop_view(request):
 
     return render(request, 'shop.html', context)
 
+@login_required
 def about_view(request):
     return render(request, 'about.html')
 
+@login_required
 def category_view(request, slug):
     category = get_object_or_404(Category, slug__exact=slug)
     products = Product.objects.filter(category=category).order_by('id')
@@ -198,3 +201,53 @@ def category_view(request, slug):
     }
 
     return render(request, 'category.html', context)
+
+@login_required
+def product_detail_view(request, slug):
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    review = request.POST.get('review', "")
+
+    product = get_object_or_404(Product, slug__exact=slug)
+    featured_products = Product.objects.filter(is_featured=True)
+    related_products = Product.objects.filter(
+        category__slug__iexact=product.category.slug
+    )
+    reviews = Review.objects.filter(product=product).order_by('-id')
+
+    if request.method == "POST":
+        if name and email:
+            Review.objects.create(
+                user=request.user,
+                product=product,
+                name=name,
+                email=email,
+                review=review,
+            )
+            messages.success(request, 'Review added')
+            return redirect(product.get_absolute_url())
+
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email added to the list')
+            return redirect(product.get_absolute_url())
+            # return redirect('product_detail', slug)
+
+    context = {
+        'product': product,
+        'featured_products': featured_products,
+        'related_products': related_products,
+        'reviews': reviews,
+    }
+
+    return render(request, 'shop-detail.html', context)
+
+@login_required
+def testimonial_view(request):
+    email = request.POST.get('email')
+    if request.method == "POST":
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email added to the list')
+            return redirect('testimonial')
+    return render(request, 'testimonial.html')
