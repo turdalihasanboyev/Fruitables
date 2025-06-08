@@ -212,7 +212,7 @@ def product_detail_view(request, slug):
     featured_products = Product.objects.filter(is_featured=True)
     related_products = Product.objects.filter(
         category__slug__iexact=product.category.slug
-    )
+    ).exclude(id=product.id)
     reviews = Review.objects.filter(product=product).order_by('-id')
 
     if request.method == "POST":
