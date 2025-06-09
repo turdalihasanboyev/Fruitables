@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
 
-from .models import CustomUser, Product, SubEmail, Contact, Category, Review, WishList, WishListItem
+from .models import CustomUser, Product, SubEmail, Contact, Category, Review, WishList, WishListItem, Cart, CartItem
 
 
 @login_required
@@ -260,8 +260,12 @@ def add_to_wishlist(request, pk):
     wishlist, wishlist_created = WishList.objects.get_or_create(user=request.user)
     wishlist_item, wishlist_item_created = WishListItem.objects.get_or_create(product=product, wishlist=wishlist)
 
+    if wishlist_created:
+        messages.success(request, 'Wishlist created')
+    if wishlist_item_created:
+        messages.success(request, 'Product added to wishlist')
     if not wishlist_item_created:
-        messages.warning(request, 'Product already in your wishlist')
+        messages.success(request, 'Product already in wishlist')
 
     return redirect(request.META.get("HTTP_REFERER", reverse("home")))
 
@@ -295,3 +299,38 @@ def wishlist_view(request):
             messages.success(request, 'Email added to the list')
             return redirect('wishlist')
     return render(request, 'wishlist.html', {'wishlist_items': wishlist_items})
+
+@login_required
+def add_to_cart(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    cart, cart_created = Cart.objects.get_or_create(user=request.user)
+    cart_item, cart_item_created = CartItem.objects.get_or_create(product=product, cart=cart)
+
+    if cart_created:
+        messages.success(request, 'Cart created')
+    if cart_item_created:
+        messages.success(request, 'Product added to cart')
+    if not cart_item_created:
+        messages.info(request, "Item already in cart")
+
+    return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+@login_required
+def remove_from_cart(request, pk):
+    cart_item = get_object_or_404(CartItem, pk=pk)
+    cart = cart_item.cart
+
+    if cart.user != request.user:
+        messages.error(request, "You don't have permission to remove this item.")
+        return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+    cart_item.delete()
+    messages.success(request, 'Product removed from your cart')
+
+    other_items = CartItem.objects.filter(cart=cart).exists()
+
+    if not other_items:
+        cart.delete()
+        messages.info(request, 'Your cart is now empty and has been deleted.')
+
+    return redirect(request.META.get("HTTP_REFERER", reverse("home")))

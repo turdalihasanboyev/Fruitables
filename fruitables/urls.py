@@ -17,6 +17,8 @@ from .views import (
     add_to_wishlist,
     remove_from_wishlist,
     wishlist_view,
+    add_to_cart,
+    remove_from_cart,
 )
 
 
@@ -37,4 +39,6 @@ urlpatterns = [
     path('product/add-to-wishlist/<int:pk>/', add_to_wishlist, name='add_to_wishlist'),
     path('product/remove-from-wishlist/<int:pk>/', remove_from_wishlist, name='remove_from_wishlist'),
     path('wishlist/', wishlist_view, name='wishlist'),
+    path('product/add-to-cart/<int:pk>/', add_to_cart, name='add_to_cart'),
+    path('product/remove-from-cart/<int:pk>/', remove_from_cart, name='remove_from_cart'),
 ]
