@@ -76,7 +76,7 @@
                 </button>
                 <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                     <div class="navbar-nav mx-auto">
-                        <a href="{% url 'home2' %}" class="nav-item nav-link active">Home</a>
+                        <a href="{% url 'home2' %}" class="nav-item nav-link">Home</a>
                         <a href="{% url 'shop' %}" class="nav-item nav-link">Shop</a>
                         <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
                         <a href="{% url 'about' %}" class="nav-item nav-link">About Us</a>
@@ -87,11 +87,11 @@
                             class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4"
                             data-bs-toggle="modal" data-bs-target="#searchModal"><i
                                 class="fas fa-search text-primary"></i></button>
-                        <a href="#" class="position-relative me-4 my-auto">
+                        <a href="{% url 'cart' %}" class="position-relative me-4 my-auto">
                             <i class="fa fa-shopping-bag fa-2x"></i>
                             <span
                                 class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
-                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">3</span>
+                                style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{ cart_items_count }}</span>
                         </a>
                         <a href="{% url 'wishlist' %}" class="position-relative me-4 my-auto">
                             <i class="fa fa-heart fa-2x"></i>
@@ -204,7 +204,7 @@
                         <h4 class="text-light mb-3">Account</h4>
                         <a class="btn-link" href="{% url 'profile' user.pk %}">My Account</a>
                         <a class="btn-link" href="#">Shop details</a>
-                        <a class="btn-link" href="#">Shopping Cart</a>
+                        <a class="btn-link" href="{% url 'cart' %}">Shopping Cart</a>
                         <a class="btn-link" href="{% url 'wishlist' %}">Wishlist</a>
                         <a class="btn-link" href="#">Order History</a>
                         <a class="btn-link" href="#">International Orders</a>

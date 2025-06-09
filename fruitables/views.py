@@ -265,7 +265,7 @@ def add_to_wishlist(request, pk):
     if wishlist_item_created:
         messages.success(request, 'Product added to wishlist')
     if not wishlist_item_created:
-        messages.success(request, 'Product already in wishlist')
+        messages.info(request, 'Product already in wishlist')
 
     return redirect(request.META.get("HTTP_REFERER", reverse("home")))
 
@@ -334,3 +334,27 @@ def remove_from_cart(request, pk):
         messages.info(request, 'Your cart is now empty and has been deleted.')
 
     return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+@login_required
+def cart_view(request):
+    email = request.POST.get('email')
+
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    cart_sub_total_price = cart.cart_sub_total_price
+    cart_total_price = cart.cart_total_price
+
+    if request.method == 'POST':
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'Email sent to you')
+            return redirect(request.META.get("HTTP_REFERER", reverse("home")))
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'cart_sub_total_price': cart_sub_total_price,
+        'cart_total_price': cart_total_price,
+    }
+
+    return render(request, 'cart.html', context)
