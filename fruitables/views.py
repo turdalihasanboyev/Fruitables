@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from django.urls import reverse
 
-from .models import CustomUser, Product, SubEmail, Contact, Category, Review, WishList, WishListItem, Cart, CartItem
+from .models import CustomUser, Product, SubEmail, Contact, Category, Review, WishList, WishListItem, Cart, CartItem, Order, OrderItem
 
 
 @login_required
@@ -18,16 +18,17 @@ def profile_view(request, pk):
 
 @login_required
 def home_view(request):
-    email = request.POST.get('email')
-
     vegetables = Product.objects.filter(category__slug__exact='vegetable')
     best_products = Product.objects.all().order_by('-views')[:6]
     top_products = Product.objects.all().order_by('-views')[:4]
 
-    if email:
-        SubEmail.objects.create(email=email)
-        messages.success(request, 'You have successfully subscribed to our newsletter!')
-        return redirect('home')
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'You have successfully subscribed to our newsletter!')
+            return redirect('home')
 
     context = {
         'vegetables': vegetables,
@@ -39,16 +40,17 @@ def home_view(request):
 
 @login_required
 def home_view2(request):
-    email = request.POST.get('email')
-
     vegetables = Product.objects.filter(category__slug__exact='vegetable')
     best_products = Product.objects.all().order_by('-views')[:6]
     top_products = Product.objects.all().order_by('-views')[:4]
 
-    if email:
-        SubEmail.objects.create(email=email)
-        messages.success(request, 'You have successfully subscribed to our newsletter!')
-        return redirect('home2')
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        if email:
+            SubEmail.objects.create(email=email)
+            messages.success(request, 'You have successfully subscribed to our newsletter!')
+            return redirect('home2')
 
     context = {
         'vegetables': vegetables,
@@ -206,10 +208,6 @@ def category_view(request, slug):
 
 @login_required
 def product_detail_view(request, slug):
-    name = request.POST.get('name')
-    email = request.POST.get('email')
-    review = request.POST.get('review', "")
-
     product = get_object_or_404(Product, slug__exact=slug)
     featured_products = Product.objects.filter(is_featured=True)
     related_products = Product.objects.filter(
@@ -218,6 +216,10 @@ def product_detail_view(request, slug):
     reviews = Review.objects.filter(product=product).order_by('-id')
 
     if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        review = request.POST.get('review', "")
+
         if name and email:
             Review.objects.create(
                 user=request.user,
@@ -246,8 +248,8 @@ def product_detail_view(request, slug):
 
 @login_required
 def testimonial_view(request):
-    email = request.POST.get('email')
     if request.method == "POST":
+        email = request.POST.get('email')
         if email:
             SubEmail.objects.create(email=email)
             messages.success(request, 'Email added to the list')
@@ -291,9 +293,9 @@ def remove_from_wishlist(request, pk):
 
 @login_required
 def wishlist_view(request):
-    email = request.POST.get('email')
     wishlist_items = WishListItem.objects.filter(wishlist__user=request.user)
     if request.method == "POST":
+        email = request.POST.get('email')
         if email:
             SubEmail.objects.create(email=email)
             messages.success(request, 'Email added to the list')
@@ -337,14 +339,14 @@ def remove_from_cart(request, pk):
 
 @login_required
 def cart_view(request):
-    email = request.POST.get('email')
-
     cart = get_object_or_404(Cart, user=request.user)
     cart_items = CartItem.objects.filter(cart=cart)
     cart_sub_total_price = cart.cart_sub_total_price
     cart_total_price = cart.cart_total_price
 
     if request.method == 'POST':
+        email = request.POST.get('email')
+
         if email:
             SubEmail.objects.create(email=email)
             messages.success(request, 'Email sent to you')
@@ -358,3 +360,67 @@ def cart_view(request):
     }
 
     return render(request, 'cart.html', context)
+
+@login_required
+def checkout_view(request):
+    cart = get_object_or_404(Cart, user=request.user)
+    cart_items = CartItem.objects.filter(cart=cart)
+    total = cart.cart_total_price
+    sub_total = cart.cart_sub_total_price
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        company_name = request.POST.get('company_name')
+        adress = request.POST.get('adress', '')
+        city = request.POST.get('city')
+        country = request.POST.get('country')
+        zip_code = request.POST.get('zip_code')
+        phone_number = request.POST.get('phone_number')
+        notes = request.POST.get('notes', '')
+
+        # if email:
+        #     SubEmail.objects.create(email=email)
+        #     messages.success(request, 'Email sent to you')
+
+        if first_name and last_name and company_name and city and country and zip_code and phone_number and email:
+            order = Order.objects.create(
+                user=request.user,
+                first_name=first_name,
+                last_name=last_name,
+                company_name=company_name,
+                adress=adress,
+                city=city,
+                country=country,
+                zip_code=zip_code,
+                phone_number=phone_number,
+                notes=notes,
+                email=email,
+            )
+            order.save()
+            messages.success(request, "Your order has been created.")
+
+            for item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    product=item.product,
+                    quantity=item.quantity,
+                    price=item.product.discount,
+                )
+
+            cart.delete()
+            messages.success(request, "Your order has been placed successfully!")
+            return redirect('home')
+        else:
+            messages.error(request, "Please fill all the fields.")
+            return redirect('checkout')
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'total': total,
+        'sub_total': sub_total,
+    }
+
+    return render(request, 'chackout.html', context)
